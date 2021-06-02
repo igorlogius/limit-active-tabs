@@ -1,7 +1,7 @@
 
 async function onActivated(activeInfo) {
 
-	let tabs = await browser.tabs.query({url: "*://*/*"});
+	let tabs = await browser.tabs.query({url: "*://*/*", pinned: false});
 
 	const MAX_ACTIV_TABS = (await (async () => {
 		try {
