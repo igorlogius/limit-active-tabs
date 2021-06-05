@@ -24,30 +24,19 @@ async function onActivated(activeInfo) {
 
 	})());
 
-	//console.log(MAX_ACTIV_TABS);
-
 	const tabids = tabs.sort(function(a, b) {
 		return (a.lastAccessed - b.lastAccessed)
 	}).reverse().slice(MAX_ACTIV_TABS).map( t => t.id)
 
-	//console.log('discarded tabs', tabids);
-
-	tabids.forEach( function(id) {
+	tabids.forEach( async function(id) {
 		if( ! excluded.has(id) ) {
 			browser.tabs.discard(id)
-			console.log('discarded tab', id);
-		}else{
-			console.log('skiped discarding excluded tab', id);
 		}
 	});
 
 }
-browser.tabs.onActivated.addListener(onActivated);
-
-
 
 async function onClicked(tab, clickData){
-	
 	if( excluded.has(tab.id) ){
 		excluded.delete(tab.id);
 		await browser.browserAction.setBadgeText({tabId: tab.id, text: "" }); // managed
@@ -57,5 +46,20 @@ async function onClicked(tab, clickData){
 	}
 }
 
+function onRemoved(tabId, removeInfo) {
+    excluded.delete(tabId);
+}
+
+
 // add listeners
+browser.tabs.onActivated.addListener(onActivated);
 browser.browserAction.onClicked.addListener(onClicked);
+browser.tabs.onRemoved.addListener(onRemoved);
+browser.tabs.onUpdated.addListener( async (tabId, changeInfo, tabInfo) => {
+	if(changeInfo.status !== 'complete'){
+		return;
+	}
+	if (excluded.has(tabId)) {
+		await browser.browserAction.setBadgeText({"tabId": tabId, text: "off" }); // managed
+	}
+}, {properties:['status']} );
