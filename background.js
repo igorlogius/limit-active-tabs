@@ -1,6 +1,14 @@
 
 const excluded = new Set();
 
+function difference(setA, setB) {
+    let _difference = new Set(setA)
+    for (let elem of setB) {
+        _difference.delete(elem)
+    }
+    return _difference
+}
+
 async function onActivated(activeInfo) {
 
 	let tabs = await browser.tabs.query({url: "*://*/*", pinned: false});
@@ -24,15 +32,24 @@ async function onActivated(activeInfo) {
 
 	})());
 
-	const tabids = tabs.sort(function(a, b) {
+	let tabids = tabs.sort(function(a, b) {
 		return (a.lastAccessed - b.lastAccessed)
-	}).reverse().slice(MAX_ACTIV_TABS).map( t => t.id)
+	}).reverse().map( t => t.id);
 
-	tabids.forEach( async function(id) {
-		if( ! excluded.has(id) ) {
-			browser.tabs.discard(id)
+	//console.log('discarded with excluded', tabids);
+
+	// keep the order, but remove the excluded once 
+	excluded.forEach(function(value) {
+		const idx = tabids.indexOf(value)
+		if(idx > -1){
+			tabids.splice(idx,1);
 		}
 	});
+	//console.log('discarded without excluded', tabids);
+	tabids = tabids.slice(MAX_ACTIV_TABS);
+	//console.log('discarded without excluded and sliced down', tabids);
+
+	browser.tabs.discard(tabids);
 
 }
 
