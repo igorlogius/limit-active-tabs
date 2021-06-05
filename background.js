@@ -1,4 +1,6 @@
 
+const excluded = new Set();
+
 async function onActivated(activeInfo) {
 
 	let tabs = await browser.tabs.query({url: "*://*/*", pinned: false});
@@ -28,10 +30,32 @@ async function onActivated(activeInfo) {
 		return (a.lastAccessed - b.lastAccessed)
 	}).reverse().slice(MAX_ACTIV_TABS).map( t => t.id)
 
-	console.log('discarded tabs', tabids);
-	browser.tabs.discard(tabids);
+	//console.log('discarded tabs', tabids);
 
+	tabids.forEach( function(id) {
+		if( ! excluded.has(id) ) {
+			browser.tabs.discard(id)
+			console.log('discarded tab', id);
+		}else{
+			console.log('skiped discarding excluded tab', id);
+		}
+	});
 
 }
 browser.tabs.onActivated.addListener(onActivated);
 
+
+
+async function onClicked(tab, clickData){
+	
+	if( excluded.has(tab.id) ){
+		excluded.delete(tab.id);
+		await browser.browserAction.setBadgeText({tabId: tab.id, text: "" }); // managed
+	}else{
+		excluded.add(tab.id);
+		await browser.browserAction.setBadgeText({tabId: tab.id, text: "off" }); // managed
+	}
+}
+
+// add listeners
+browser.browserAction.onClicked.addListener(onClicked);

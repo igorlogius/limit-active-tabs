@@ -10,6 +10,9 @@
   },
   "manifest_version": 2,
   "name": "limit-active-tabs",
+  "browser_action": {
+    "browser_style": true
+  },
   "options_ui": {
     "page": "options.html"
   },
