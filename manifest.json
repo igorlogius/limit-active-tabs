@@ -7,6 +7,7 @@
   },
   "description": "",
   "icons": {
+	  "128": "icon.png"
   },
   "manifest_version": 2,
   "name": "limit-active-tabs",
@@ -20,5 +21,5 @@
     "storage",
     "tabs"
   ],
-  "version": "0.2.3"
+  "version": "0.2.4"
 }

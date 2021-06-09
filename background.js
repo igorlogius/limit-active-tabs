@@ -80,3 +80,6 @@ browser.tabs.onUpdated.addListener( async (tabId, changeInfo, tabInfo) => {
 		await browser.browserAction.setBadgeText({"tabId": tabId, text: "off" }); // managed
 	}
 }, {properties:['status']} );
+
+// todo: add context menu on tab 
+// todo: add icon to tab 
