@@ -1,15 +1,8 @@
+/* global browser */
 
 const excluded = new Set();
 
-function difference(setA, setB) {
-    let _difference = new Set(setA)
-    for (let elem of setB) {
-        _difference.delete(elem)
-    }
-    return _difference
-}
-
-async function onActivated(activeInfo) {
+async function onActivated(/*activeInfo*/) {
 
 	let tabs = await browser.tabs.query({url: "*://*/*", pinned: false});
 
@@ -38,7 +31,7 @@ async function onActivated(activeInfo) {
 
 	//console.log('discarded with excluded', tabids);
 
-	// keep the order, but remove the excluded once 
+	// keep the order, but remove the excluded once
 	excluded.forEach(function(value) {
 		const idx = tabids.indexOf(value)
 		if(idx > -1){
@@ -53,7 +46,7 @@ async function onActivated(activeInfo) {
 
 }
 
-async function onClicked(tab, clickData){
+async function onClicked(tab /*, clickData*/){
 	if( excluded.has(tab.id) ){
 		excluded.delete(tab.id);
 		await browser.browserAction.setBadgeText({tabId: tab.id, text: "" }); // managed
@@ -63,7 +56,7 @@ async function onClicked(tab, clickData){
 	}
 }
 
-function onRemoved(tabId, removeInfo) {
+function onRemoved(tabId/*, removeInfo*/) {
     excluded.delete(tabId);
 }
 
@@ -72,7 +65,7 @@ function onRemoved(tabId, removeInfo) {
 browser.tabs.onActivated.addListener(onActivated);
 browser.browserAction.onClicked.addListener(onClicked);
 browser.tabs.onRemoved.addListener(onRemoved);
-browser.tabs.onUpdated.addListener( async (tabId, changeInfo, tabInfo) => {
+browser.tabs.onUpdated.addListener( async (tabId, changeInfo/*, tabInfo*/) => {
 	if(changeInfo.status !== 'complete'){
 		return;
 	}
@@ -81,5 +74,5 @@ browser.tabs.onUpdated.addListener( async (tabId, changeInfo, tabInfo) => {
 	}
 }, {properties:['status']} );
 
-// todo: add context menu on tab 
-// todo: add icon to tab 
+// todo: add context menu on tab
+// todo: add icon to tab
