@@ -1,78 +1,74 @@
 /* global browser */
 
 const excluded = new Set();
+let tid = null;
 
-async function onActivated(/*activeInfo*/) {
-
-	let tabs = await browser.tabs.query({url: "*://*/*", pinned: false});
-
-	const MAX_ACTIV_TABS = (await (async () => {
-		try {
-			const storeid = 'maxactivtabs';
-			let tmp = await browser.storage.local.get(storeid);
-			if (typeof tmp[storeid] !== 'undefined'){
-				tmp = parseInt(tmp[storeid]);
-			}
-			if(typeof tmp === 'number') {
-				if(tmp > 0) {
-					return tmp;
-				}
-			}
-		}catch(e){
-			console.error(e);
-		}
-		return 3;
-
-	})());
-
-	let tabids = tabs.sort(function(a, b) {
-		return (a.lastAccessed - b.lastAccessed)
-	}).reverse().map( t => t.id);
-
-	//console.log('discarded with excluded', tabids);
-
-	// keep the order, but remove the excluded once
-	excluded.forEach(function(value) {
-		const idx = tabids.indexOf(value)
-		if(idx > -1){
-			tabids.splice(idx,1);
-		}
-	});
-	//console.log('discarded without excluded', tabids);
-	tabids = tabids.slice(MAX_ACTIV_TABS);
-	//console.log('discarded without excluded and sliced down', tabids);
-
-	browser.tabs.discard(tabids);
-
+async function getFromStorage(type, id, fallback) {
+    let tmp = await browser.storage.local.get(id);
+    return (typeof tmp[id] === type) ? tmp[id] : fallback;
 }
 
-async function onClicked(tab /*, clickData*/){
-	if( excluded.has(tab.id) ){
-		excluded.delete(tab.id);
-		await browser.browserAction.setBadgeText({tabId: tab.id, text: "" }); // managed
-	}else{
-		excluded.add(tab.id);
-		await browser.browserAction.setBadgeText({tabId: tab.id, text: "off" }); // managed
-	}
+async function doUnload() {
+	const tabs = await browser.tabs.query({url: "*://*/*", currentWindow: true, pinned: false, discarded: false });
+    const maxactivtabs = await getFromStorage('number', 'maxactivtabs', 3);
+
+	// remove excluded and order tabs (by last accessed time
+	let tabIds = tabs.filter(t => (!excluded.has(t.id)) )
+                     .sort( (a, b) => { return (b.lastAccessed - a.lastAccessed) } )
+                     .map( t => t.id );
+
+    // remove user defined number of last accessed tabs
+    if(tabIds.length > maxactivtabs){
+        tabIds = tabIds.slice(maxactivtabs);
+        browser.tabs.discard(tabIds);
+    }
 }
 
-function onRemoved(tabId/*, removeInfo*/) {
-    excluded.delete(tabId);
+async function onClicked(/*tab ,clickData*/){
+    const tabs = await browser.tabs.query({currentWindow: true, highlighted: true});
+    for(const tab of tabs) {
+        if( excluded.has(tab.id) ){
+            excluded.delete(tab.id);
+            browser.browserAction.setBadgeText({tabId: tab.id, text: "" });
+        }else{
+            excluded.add(tab.id);
+            browser.browserAction.setBadgeText({tabId: tab.id, text: "off" });
+        }
+    }
 }
 
+function onRemoved(tabId /*,removeInfo*/) {
+    if (excluded.has(tabId)) {
+        excluded.delete(tabId);
+    }
+}
+
+function delay_unload(){
+    clearTimeout(tid);
+    tid = setTimeout(doUnload, 2000);
+}
+
+// default state is disabled
+browser.browserAction.disable();
 
 // add listeners
-browser.tabs.onActivated.addListener(onActivated);
 browser.browserAction.onClicked.addListener(onClicked);
 browser.tabs.onRemoved.addListener(onRemoved);
-browser.tabs.onUpdated.addListener( async (tabId, changeInfo/*, tabInfo*/) => {
-	if(changeInfo.status !== 'complete'){
-		return;
-	}
-	if (excluded.has(tabId)) {
-		await browser.browserAction.setBadgeText({"tabId": tabId, text: "off" }); // managed
-	}
-}, {properties:['status']} );
+browser.tabs.onActivated.addListener(delay_unload);
+browser.tabs.onUpdated.addListener( async (tabId, changeInfo, tab) => {
+       delay_unload();
+       if(changeInfo.status === 'complete'){
+        if(/^https?:/.test(tab.url)){
+            browser.browserAction.enable(tabId);
+            if (excluded.has(tabId)) {
+                browser.browserAction.setBadgeText({"tabId": tabId, text: "off" });
+            }else{
+                browser.browserAction.setBadgeText({"tabId": tabId, text: "" });
+            }
+            return;
+        }else{
+            browser.browserAction.disable(tabId);
+        }
+      }
+}, { properties:['status']} );
 
-// todo: add context menu on tab
-// todo: add icon to tab

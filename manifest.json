@@ -5,15 +5,27 @@
       "background.js"
     ]
   },
-  "description": "",
+  "browser_action": {
+    "theme_icons": [
+      {
+        "light": "dark-128.png",
+        "dark": "light-128.png",
+        "size": 128
+      }
+    ]
+  },
+  "commands": {
+    "_execute_page_action": {
+      "suggested_key": {
+        "default": "Shift+Alt+L"
+      }
+    }
+  },
   "icons": {
 	  "128": "icon.png"
   },
   "manifest_version": 2,
-  "name": "limit-active-tabs",
-  "browser_action": {
-    "browser_style": true
-  },
+  "name": "Limit Active Tabs",
   "options_ui": {
     "page": "options.html"
   },
@@ -21,5 +33,5 @@
     "storage",
     "tabs"
   ],
-  "version": "0.2.4"
+  "version": "1.2.5"
 }
