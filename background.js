@@ -55,20 +55,20 @@ browser.browserAction.disable();
 browser.browserAction.onClicked.addListener(onClicked);
 browser.tabs.onRemoved.addListener(onRemoved);
 browser.tabs.onActivated.addListener(delay_unload);
-browser.tabs.onUpdated.addListener( async (tabId, changeInfo, tab) => {
-       delay_unload();
-       if(changeInfo.status === 'complete'){
+browser.tabs.onUpdated.addListener( (tabId, changeInfo, tab) => {
         if(/^https?:/.test(tab.url)){
-            browser.browserAction.enable(tabId);
-            if (excluded.has(tabId)) {
-                browser.browserAction.setBadgeText({"tabId": tabId, text: "off" });
+            if(changeInfo.status === 'complete'){
+                if (excluded.has(tabId)) {
+                    browser.browserAction.setBadgeText({"tabId": tabId, text: "off" });
+                }else{
+                    browser.browserAction.setBadgeText({"tabId": tabId, text: "" });
+                }
+                browser.browserAction.enable(tabId);
             }else{
-                browser.browserAction.setBadgeText({"tabId": tabId, text: "" });
+                delay_unload();
             }
-            return;
         }else{
             browser.browserAction.disable(tabId);
         }
-      }
 }, { properties:['status']} );
 
