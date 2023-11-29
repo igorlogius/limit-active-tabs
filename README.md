@@ -1,13 +1,20 @@
-Limits the number of active tabs, by unloading older tabs (determined by last tab activation) 
+Limits the number of active tabs, by unloading older tabs (determined by last
+tab activation)
 
 <b>Why should i use this and not "Auto Tab Discard"? </b>
-This addon is more lightweight and far easier to use (configure), since it only has 1 option (the amount of tabs to keep loaded)  
-So all in all for people who like their addons simple, small and to the point. 
+This addon is more lightweight and far easier to use (configure), since it only
+has 1 option (the amount of tabs to keep loaded) So all in all for people who
+like their addons simple, small and to the point.
 
-<b>Usage:</b>
+<b>Usage/Features:</b>
 <ol>
-	<li>install the add-on </li>
-		  <li>(optional) on the addons preference page change the max number of active tabs (default is 3)</li>
+  <li>
+    change the max number of active tabs (default is 3) in the preferences
+  </li>
+  <li>
+    use the toolbar button to exclude the current or all highlighted tabs from
+    unloading
+  </li>
 </ol>
 
 <b>Notes:</b>
