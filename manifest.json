@@ -1,11 +1,10 @@
 {
   "author": "igorlogius",
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "scripts": ["background.js"]
   },
   "browser_action": {
+    "default_area": "navbar",
     "theme_icons": [
       {
         "light": "dark-128.png",
@@ -22,16 +21,13 @@
     }
   },
   "icons": {
-	  "128": "icon.png"
+    "128": "icon.png"
   },
   "manifest_version": 2,
   "name": "Limit Active Tabs",
   "options_ui": {
     "page": "options.html"
   },
-  "permissions": [
-    "storage",
-    "tabs"
-  ],
-  "version": "1.2.6"
+  "permissions": ["storage", "tabs"],
+  "version": "1.2.7"
 }
