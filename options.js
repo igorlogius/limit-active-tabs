@@ -31,7 +31,7 @@ function onChange(evt) {
   browser.storage.local.set(obj).catch(console.error);
 }
 
-["maxactivtabs"].map((id) => {
+["maxactivtabs", "includepins"].map((id) => {
   browser.storage.local
     .get(id)
     .then((obj) => {

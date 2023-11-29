@@ -9,12 +9,18 @@ async function getFromStorage(type, id, fallback) {
 }
 
 async function doUnload() {
-  const tabs = await browser.tabs.query({
+  const includepins = await getFromStorage("boolean", "includepins", false);
+
+  let qry = {
     url: "*://*/*",
     currentWindow: true,
-    pinned: false,
     discarded: false,
-  });
+  };
+  if (!includepins) {
+    qry["pinned"] = false;
+  }
+
+  const tabs = await browser.tabs.query(qry);
   const maxactivtabs = await getFromStorage("number", "maxactivtabs", 3);
 
   // remove excluded and order tabs (by last accessed time
