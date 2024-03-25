@@ -1,6 +1,10 @@
 Limits the number of active tabs, by unloading older tabs (determined by last
 tab activation)
 
+<b>Short Demo Video:</b>
+
+https://github.com/igorlogius/limit-active-tabs/assets/67047467/9dc448e6-f598-42cd-ba15-637bbfdbfa90
+
 <b>Why should i use this and not "Auto Tab Discard"? </b>
 This addon is more lightweight and far easier to use (configure), since has only a few options.
 <b>Usage/Features:</b>
