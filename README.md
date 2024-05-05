@@ -1,5 +1,7 @@
 Limits the number of active tabs, by unloading older tabs (determined by last tab activation)
 
+### [Click here to report a bug, make a suggestion or ask a question](https://github.com/igorlogius/igorlogius/issues/new/choose)
+
 <b>Short Demo Video:</b>
 
 https://github.com/igorlogius/limit-active-tabs/assets/67047467/9dc448e6-f598-42cd-ba15-637bbfdbfa90
