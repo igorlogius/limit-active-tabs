@@ -1,5 +1,7 @@
 Limits the number of active tabs, by unloading older tabs (determined by last tab activation)
 
+[![](https://raw.githubusercontent.com/igorlogius/igorlogius/main/geFxAddon.png)](https://addons.mozilla.org/firefox/addon/limit-active-tabs/)
+
 ### [Click here to report a bug, make a suggestion or ask a question](https://github.com/igorlogius/igorlogius/issues/new/choose)
 
 <b>Short Demo Video:</b>
