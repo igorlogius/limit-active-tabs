@@ -1,6 +1,6 @@
 {
   "author": "igorlogius",
-  "homepage_url": "https://github.com/igorlogius",
+  "homepage_url": "https://github.com/igorlogius/limit-active-tabs",
   "background": {
     "scripts": ["background.js"]
   },
@@ -31,5 +31,5 @@
     "page": "options.html"
   },
   "permissions": ["storage", "tabs"],
-  "version": "1.2.9"
+  "version": "1.2.10"
 }

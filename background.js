@@ -35,6 +35,7 @@ async function doUnload() {
   if (tabIds.length > maxactivtabs) {
     tabIds = tabIds.slice(maxactivtabs);
     browser.tabs.discard(tabIds);
+    console.debug("unloaded", tabIds);
   }
 }
 
@@ -72,22 +73,20 @@ browser.browserAction.disable();
 browser.browserAction.onClicked.addListener(onClicked);
 browser.tabs.onRemoved.addListener(onRemoved);
 browser.tabs.onActivated.addListener(delay_unload);
+browser.tabs.onCreated.addListener(delay_unload);
 browser.tabs.onUpdated.addListener(
   (tabId, changeInfo, tab) => {
-    if (/^https?:/.test(tab.url)) {
-      if (changeInfo.status === "complete") {
-        if (excluded.has(tabId)) {
-          browser.browserAction.setBadgeText({ tabId: tabId, text: "off" });
-        } else {
-          browser.browserAction.setBadgeText({ tabId: tabId, text: "" });
-        }
-        browser.browserAction.enable(tabId);
+    if (typeof changeInfo.url === "string" && /^https?:/.test(tab.url)) {
+      if (excluded.has(tabId)) {
+        browser.browserAction.setBadgeText({ tabId: tabId, text: "off" });
       } else {
-        delay_unload();
+        browser.browserAction.setBadgeText({ tabId: tabId, text: "" });
       }
+      browser.browserAction.enable(tabId);
     } else {
+      browser.browserAction.setBadgeText({ tabId: tabId, text: "" });
       browser.browserAction.disable(tabId);
     }
   },
-  { properties: ["status"] }
+  { properties: ["url"] },
 );
