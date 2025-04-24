@@ -5,14 +5,7 @@
     "scripts": ["background.js"]
   },
   "browser_action": {
-    "default_area": "navbar",
-    "theme_icons": [
-      {
-        "light": "dark-128.png",
-        "dark": "light-128.png",
-        "size": 128
-      }
-    ]
+    "default_area": "navbar"
   },
   "commands": {
     "_execute_page_action": {
@@ -21,7 +14,7 @@
       }
     }
   },
-  "description": "Limits the number of active tabs, by unloading older tabs (determined by last tab activation)",
+  "description": "Limits number of active tabs, unloading older (determined by last activation)",
   "icons": {
     "128": "icon.png"
   },
@@ -31,5 +24,5 @@
     "page": "options.html"
   },
   "permissions": ["storage", "tabs"],
-  "version": "1.2.10"
+  "version": "1.2.11"
 }

@@ -72,11 +72,10 @@ browser.browserAction.disable();
 // add listeners
 browser.browserAction.onClicked.addListener(onClicked);
 browser.tabs.onRemoved.addListener(onRemoved);
-browser.tabs.onActivated.addListener(delay_unload);
-browser.tabs.onCreated.addListener(delay_unload);
 browser.tabs.onUpdated.addListener(
   (tabId, changeInfo, tab) => {
-    if (typeof changeInfo.url === "string" && /^https?:/.test(tab.url)) {
+    // set badge icon
+    if (changeInfo.status === "complete") {
       if (excluded.has(tabId)) {
         browser.browserAction.setBadgeText({ tabId: tabId, text: "off" });
       } else {
@@ -87,6 +86,11 @@ browser.tabs.onUpdated.addListener(
       browser.browserAction.setBadgeText({ tabId: tabId, text: "" });
       browser.browserAction.disable(tabId);
     }
+
+    //
+    if (typeof changeInfo.url === "string" && /^https?:/.test(changeInfo.url)) {
+      delay_unload();
+    }
   },
-  { properties: ["url"] },
+  { properties: ["status", "url"] },
 );
